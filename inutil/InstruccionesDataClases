@@ -1,0 +1,17 @@
+'''DATA CLASES: Persona, Grupo, Evento
+
+PERSONA
+Atributos: Nombre, Apellido1, Apellido2, DNI, Correo, Instagram
+Metodos: crearPersona, modificarDatosPersona(crear, borrar y suda), borrarPersona
+
+GRUPO
+Atributos: Titular, IDGrupo = (DNI Titular, ?), VectorPersonas
+Metodos: crearGrupo, eliminarGrupo, añadirPersonaGrupo, eliminarPersonaGrupo, cambiarTitular
+
+EVENTO
+Atributos: IDEvento, cuentaPaso[], linkTree, linkForms
+Metodos: crearEvento, modificarEvento, eliminarGrupoEvento, añadirGrupoEvento, eliminarGrupoEvento, enviarFormularios
+
+PASOS
+Atributos: Insta, linktree, nombrePaso
+Metodos: crearPaso, borrarPaso, modificarPaso(crear, borrar y suda)'''
