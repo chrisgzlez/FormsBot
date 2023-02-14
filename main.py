@@ -14,12 +14,18 @@ import sys #para pasar por linea de comandos
 # XPATH Syntax
 # https://www.w3schools.com/xml/xpath_syntax.asp
 
-def getLugaryFecha(connection, idEvento) -> list[str]:
-    res = []
+def getLugaryFecha(connection, idEvento) -> dict:
     cursor = connection.cursor()
-    rows = cursor.execute("select lugar, fecha from eventos where id = \'"+idEvento+"\'")
-    print(rows[0])
-    return
+    # Un unico evento
+    cursor.execute("""select lugar, fecha from eventos where id = %s""", (idEvento,))
+    row = cursor.fetchall()[0]
+
+    return {
+        "lugar" : str(row[0]),
+        "dia"   : str(row[1].day),
+        "mes"   : str(row[1].month),
+        "year"   : str(row[1].year)
+    }
 
 def selectEvent(connection) -> list[str]:
     
@@ -27,7 +33,9 @@ def selectEvent(connection) -> list[str]:
 
 def linktree(connection, idEvento, browser, link):
     browser.get(link)
-    getLugaryFecha(connection, idEvento)
+    data = getLugaryFecha(connection, idEvento)
+    print(data)
+    browser.close()
     return
 
     
@@ -102,7 +110,7 @@ if __name__ == "__main__":
         if(cookies != None):
             cookies.click()'''
         while(1):
-            time.sleep(1)
+            time.sleep(2)
             prueba = browser.find_elements(By.XPATH, '//main//header/section//a')
             if len(prueba) <= 0:
                 browser.refresh()
