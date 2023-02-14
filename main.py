@@ -99,7 +99,7 @@ if __name__ == "__main__":
 
     browser = webdriver.Chrome(executable_path='./chromedriver', options=option)
     
-    browser.get("https://www.instagram.com/pasoinformatica.2223/")
+    browser.get("https://www.instagram.com/chrisgzlez/")
 
     #time.sleep(5)
 
@@ -116,11 +116,13 @@ if __name__ == "__main__":
             
             # Refrescar en página si no se encuentra el elemento hasta que se encuentre
             # TODO: Meterlo en una función con el while 1
+            print("refrescar")
             try:
-                WebDriverWait(browser, 5).until(EC.element_to_be_clickable((By.XPATH, '//main//header/section//a')))
+                WebDriverWait(browser, 3).until(EC.element_to_be_clickable((By.XPATH, '//main//header/section//a')))
                 prueba = browser.find_elements(By.XPATH, '//main//header/section//a')
                 print(prueba)
             except Exception as ex:
+                browser.refresh()
                 print("Cagamos")
                 continue
 
@@ -139,6 +141,7 @@ if __name__ == "__main__":
                     autoCompleteForms(browser2, link)
                 else:
                     linktree(connection, idEvento, browser2, link)
+            
                 break
             
 
