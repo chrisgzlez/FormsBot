@@ -7,6 +7,9 @@ from selenium.webdriver.common.by import By  # used to select web elements
 from Forms import forms
 from dataBase import dataBase as db
 
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.ui import WebDriverWait  # used to wait for condition
+
 import time
 
 import sys #para pasar por linea de comandos
@@ -110,8 +113,19 @@ if __name__ == "__main__":
         if(cookies != None):
             cookies.click()'''
         while(1):
-            time.sleep(2)
-            prueba = browser.find_elements(By.XPATH, '//main//header/section//a')
+            
+            # Refrescar en página si no se encuentra el elemento hasta que se encuentre
+            # TODO: Meterlo en una función con el while 1
+            try:
+                WebDriverWait(browser, 5).until(EC.element_to_be_clickable((By.XPATH, '//main//header/section//a')))
+                prueba = browser.find_elements(By.XPATH, '//main//header/section//a')
+                print(prueba)
+            except Exception as ex:
+                print("Cagamos")
+                continue
+
+            # Trabajamos con el link
+
             if len(prueba) <= 0:
                 browser.refresh()
             else:
@@ -130,7 +144,7 @@ if __name__ == "__main__":
 
 
     except Exception as ex:
-        print('EXCEPCION: '+str(ex))
+        print('EXCEPCION MAIN: '+str(ex))
     finally:
         db.disconnectDataBase(connection)
         browser.close()
