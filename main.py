@@ -1,29 +1,41 @@
-""" IMPORTS """
+"""" IMPORTS """
 # Navigate the Website
 from selenium import webdriver  # driver
 from selenium.webdriver.common.by import By  # used to select web elements
 
 # Want to use time library to check execution times and look for the fastest way
-import time
 from Forms import forms
 from dataBase import dataBase as db
+
+import time
+
+import sys #para pasar por linea de comandos
 
 # XPATH Syntax
 # https://www.w3schools.com/xml/xpath_syntax.asp
 
-if __name__ == "__main__":
+def getLugaryFecha(connection, idEvento) -> list[str]:
+    res = []
+    cursor = connection.cursor()
+    rows = cursor.execute("select lugar, fecha from eventos where id = \'"+idEvento+"\'")
+    print(rows[0])
+    return
 
-    connection = db.connectDataBase()
+def selectEvent(connection) -> list[str]:
+    
+    return
 
-    option = webdriver.ChromeOptions() # pa decir que es de chrome
-    # option.add_argument("-incognito")
-    # option.add_argument("--headless") # runs in background, doesn't use GUI, faster
-    # option.add_argument("disable-gpu") # similar to --headless
+def linktree(connection, idEvento, browser, link):
+    browser.get(link)
+    getLugaryFecha(connection, idEvento)
+    return
 
-    browser = webdriver.Chrome(executable_path='./chromedriver', options=option)
-    browser.get("https://docs.google.com/forms/d/1J6hrsxtT-QsD7PCaMP5Ek0QjZ4_7yx6FTg_ITWJ6Jfs/edit")
-
+    
+def autoCompleteForms(browser, link):
     """ OBTENER Y MODIFICAR ELEMENTOS DE LA PAGINA"""
+    browser.get(link)
+
+    #/html/body/div/div[3]/form/div[2]/div/div[3]/div[1]/div[1]/div
     send_button = forms.findButton(browser, 'Enviar', (By.XPATH, '//form//*[@role="button"]'))
 
     # XPATH to the list of items
@@ -47,23 +59,7 @@ if __name__ == "__main__":
             print(itemTitle.text)
             print(f"This is the connection type: {type(connection)}")
             #forms.autoCompleteShortAnswer(browser, itemPath, itemTitle.text, 'inventado', connection)
-            forms.autoCompleteField(browser, itemPath, itemTitle.text, 'inventado', connection)
-
-            """if (i == 1):
-                print("---------------TEXTBOX-----------------")
-                forms.autoCompleteTextBox(browser, itemPath)
-            
-            if (i == 2):
-                print("---------------CHECKBOX-----------------")
-                forms.autoCompleteCheckBox(browser, itemPath)
-            
-            if (i == 3):
-                print("---------------DROPDOWN-----------------")
-                forms.autoCompleteDropDown(browser, itemPath)
-
-            if (i == 4):
-                print("---------------RADIAL-----------------")
-                forms.autoCompleteRadial(browser, itemPath)"""
+            forms.autoCompleteField(browser, itemPath, itemTitle.text, idEvento, connection)
 
     finally:
         # Enviar
@@ -73,5 +69,61 @@ if __name__ == "__main__":
         browser.close()
         #Disconnects the database
         db.disconnectDataBase(connection)
+        return
+
+if __name__ == "__main__":
+
+    if len(sys.argv) != 2:
+        print("Error. Debes pasar como parametro el id del evento")
+        exit()
+
+    idEvento = str(sys.argv[1])
+
+    connection = db.connectDataBase()
+
+    option = webdriver.ChromeOptions() # pa decir que es de chrome
+    # option.add_argument("-incognito")
+    # option.add_argument("--headless") # runs in background, doesn't use GUI, faster
+    # option.add_argument("disable-gpu") # similar to --headless
+
+    browser = webdriver.Chrome(executable_path='./chromedriver', options=option)
+    
+    browser.get("https://www.instagram.com/pasoinformatica.2223/")
+
+    #time.sleep(5)
+
+    try:
+        #XPATH: //*[@id="mount_0_0_87"]/div/div/div/div[2]/div/div/div[1]/div/div[2]/div/div/div/div/div[2]/div/button[1]
+        #FULL-XPATH: /html/body/div[2]/div/div/div/div[2]/div/div/div[1]/div/div[2]/div/div/div/div/div[2]/div/button[1]
+        #role = "dialog"
+
+        #No es necesario aceptar las cookies, puede trabajar por detras
+        '''cookies = forms.findButton(browser, 'Permitir solo cookies necesarias', (By.XPATH, '//button'))
+        if(cookies != None):
+            cookies.click()'''
+        while(1):
+            time.sleep(1)
+            prueba = browser.find_elements(By.XPATH, '//main//header/section//a')
+            if len(prueba) <= 0:
+                browser.refresh()
+            else:
+                browser2 = webdriver.Chrome(executable_path='./chromedriver', options=option)
+
+                link = prueba[0].text
+                if 'https' not in prueba[0].text:
+                    link = f"https://{prueba[0].text}"
+                    print('LINK = '+link)
+                if 'forms' in link or 'google' in link:
+                    autoCompleteForms(browser2, link)
+                else:
+                    linktree(connection, idEvento, browser2, link)
+                break
+            
 
 
+    except Exception as ex:
+        print('EXCEPCION: '+str(ex))
+    finally:
+        db.disconnectDataBase(connection)
+        browser.close()
+        exit()
