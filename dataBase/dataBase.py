@@ -12,13 +12,13 @@ def connectDataBase():
             database = 'forms'
         )
 
-        print('Conexion exitosa')
+        print('Conexion exitosa con la base de datos')
 
         return connection
         
         
     except Exception as ex:
-        print(ex)
+        print('Error al conectar con la base de datos: ' + ex)
         return None
 
 def disconnectDataBase(connection):

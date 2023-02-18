@@ -6,8 +6,6 @@ listar personas
 listar grupos
 '''
 
-from dataBase import dataBase as db
-
 def existePersona(dni: str):
     cursor = connection.cursor() 
     cursor.execute("select dni from personas where dni = %s", (dni,))
@@ -81,39 +79,54 @@ def listarPersonas():
 def listarGrupos():
     pass
 
+def verInfoGrupo():
+    grupo = input('ID del grupo: ')
+    cursor = connection.cursor()
+    cursor.execute("select p2.dni, p2.nombre, p2.apellido1, p2.apellido2, p2.email, p2.instagram, p2.telefono from grupos as g inner join pertenecer as p on (g.id = p.grupo) inner join personas as p2 on (p2.dni = p.persona) where g.id = %s", (grupo,))
+    rows = cursor.fetchall()
+    for row in rows:
+        print(row)
+    return
 
 
-connection = db.connectDataBase()       
-while(1):
-    print('\n\nA - Crear grupo')
-    print('B - Insertar personas existentes en grupos')
-    print('C - Insertar personas nuevas en grupos')
-    print('D - Crear evento')
-    print('E - Ir grupo a evento')
-    print('F - Listar personas')
-    print('G - Listar grupos')
-    print('S - Salir')
-    opcion = input('Seleccione una opcion: ').upper()
-    print('\n')
 
-    if opcion == 'A':
-        crearGrupo()
-    elif opcion == 'B':
-        insertarPersonasExistentes()
-    elif opcion == 'C':
-        insertarPersonasNuevas()
-    elif opcion == 'D':
-        crearEvento()
-    elif opcion == 'E':
-        irGrupo()
-    elif opcion == 'F':
-        listarPersonas()
-    elif opcion == 'G':
-        listarGrupos()
-    elif opcion == 'S':
-        db.disconnectDataBase(connection)
-        exit()
-    else:
-        print('Opcion incorrecta')
+def menuBaseDatos(conn):
+    global connection
+    connection = conn    
+    while(1):
+        print('\n\nA - Crear grupo')
+        print('B - Insertar personas existentes en grupos')
+        print('C - Insertar personas nuevas en grupos')
+        print('D - Crear evento')
+        print('E - Ir grupo a evento')
+        print('F - Listar personas')
+        print('G - Listar grupos')
+        print('H - Ver info de grupo')
+        print('S - Salir')
+        opcion = input('Seleccione una opcion: ').upper()
+        print('\n')
+
+        if opcion == 'A':
+            crearGrupo()
+        elif opcion == 'B':
+            insertarPersonasExistentes()
+        elif opcion == 'C':
+            insertarPersonasNuevas()
+        elif opcion == 'D':
+            crearEvento()
+        elif opcion == 'E':
+            irGrupo()
+        elif opcion == 'F':
+            listarPersonas()
+        elif opcion == 'G':
+            listarGrupos()
+        elif opcion == 'H':
+            verInfoGrupo()
+        elif opcion == 'S':
+            print('Volviendo al menu principal...')
+            break
+        else:
+            print('Opcion incorrecta')
+    return
     
 
