@@ -1,5 +1,6 @@
 import psycopg2
 import math
+import os
 
 def connectDataBase():
     contrasena = 123456789
@@ -28,24 +29,22 @@ def disconnectDataBase(connection):
     except Exception as ex:
         print(ex)
 
+def saveFile(connection, path: str, table: str):
+    cursor = connection.cursor()
+    file_name = (table+'.csv')
+    query = ("copy (select * from "+table+") to stdout with csv delimiter ';'")
+    with open(os.path.join(path, file_name), 'w') as fp:
+        cursor.copy_expert(query, fp)
+    cursor.close()
 
 
 
-
-    '''if itemTitle == const.NOMBRE:
-        cursor.execute("select nombre from personas p inner join pertenecer p2 on (p2.persona = p.dni) natural join irevento i where i.evento = 'inventado'")
-        rows = cursor.fetchall()
-        for row in rows:
-            print(row)
-        return 'a' '''
-
-'''connection = connectDataBase()
-cursor = connection.cursor()
-idEvento = '\'inventado\''
-cursor.execute("select nombre from personas p inner join pertenecer p2 on (p2.persona = p.dni) natural join irevento i inner join grupos g on (g.id = i.grupo) where i.evento = " + idEvento + " and p.dni = g.titular")
-rows = cursor.fetchall()
-prueba = ''
-for row in rows:
-    prueba+=str(row)
-print(prueba.replace('\'', '').replace('(', '').replace(')', '').replace(',', ', ')[:-2])
-disconnectDataBase(connection)'''
+def saveData(connection):
+    try:
+        path = r'/home/adrian/formsBot/DatosCSV'
+        tables = ['personas', 'grupos', 'eventos', 'pasos', 'pertenecer', 'irevento']
+        for table in tables:
+            saveFile(connection, path, table)
+        print('Datos guardados correctamente en csv')
+    except Exception as ex:
+        print('Error al guardar los datos: '+ex)

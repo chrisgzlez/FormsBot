@@ -2,6 +2,7 @@ import dataBaseMenu
 import bot
 from dataBase import dataBase as db
 
+# !HAY QUE CERRAR EL CONNECTION.CURSOR() CADA VEZ QUE SE CREA UNO
 if __name__ == "__main__":
     global connection
     connection = db.connectDataBase()
@@ -11,15 +12,16 @@ if __name__ == "__main__":
         exit()
 
     while(1):
-        print('1 - Ejecutar bot')
-        print('2 - Gestion de base de datos')
-        print('3 - Salir')
-        op = input('Seleccione una opcion: ')
-        if op == '1':
+        print('A - Ejecutar bot')
+        print('B - Gestion de base de datos')
+        print('S - Salir')
+        op = input('Seleccione una opcion: ').upper()
+        if op == 'A':
             bot.ejecutarBot(connection)
-        elif op == '2':
+        elif op == 'B':
             dataBaseMenu.menuBaseDatos(connection)
-        elif op == '3':
+        elif op == 'S':
+            db.saveData(connection)
             db.disconnectDataBase(connection)
             exit()
         else:
