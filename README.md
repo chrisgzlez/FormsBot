@@ -1,3 +1,9 @@
+---
+title: "Pandoc nice margins"
+author: "christian"
+geometry: "left=3cm, right=3cm, top=2cm, bottom=2cm"
+---
+
 # TO-DO
 
 ## Coger Elementos (IMPORTANTE)
