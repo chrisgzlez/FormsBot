@@ -25,7 +25,7 @@ import time
 from . import constantes as const
 
 ## STATUS: WORKING
-def autoCompleteShortAnswer(driver: WebElement, xpath: str, itemTitle: str, idEvento: str, connection):
+def autoCompleteShortAnswer(driver: WebElement, xpath: str, itemTitle: str):
     # cambiado el tiempo de espera
     input = WebDriverWait(driver, 1).until(
         EC.element_to_be_clickable((By.XPATH, f'{xpath}//input')))
@@ -36,8 +36,9 @@ def autoCompleteShortAnswer(driver: WebElement, xpath: str, itemTitle: str, idEv
 
     input.clear()
     input.click()
-    entrada = getInput(itemTitle, idEvento, connection)
+    entrada = getInput(itemTitle)
     input.send_keys(entrada)
+    print('Respuesta: '+str(entrada))
     return
 
 ## TODO: Cambiar los 'String' por 'str' estamos malitos
@@ -45,18 +46,18 @@ def autoCompleteShortAnswer(driver: WebElement, xpath: str, itemTitle: str, idEv
 ## TODO: Quiza cambiar parametro connection a conn
 ## TODO: Use context wraps with teh connection?? (usando 'with')
 ## STATUS: HAS NOT BEING TESTED, BUT SHOULD WORK
-def autoCompleteTextArea(driver: WebElement, xpath: str, itemTitle: str, idEvento: str, connection):
-    print('PRIMERO')
+def autoCompleteTextArea(driver: WebElement, xpath: str, itemTitle: str):
     input = WebDriverWait(driver, 1).until(
         EC.element_to_be_clickable((By.XPATH, f'{xpath}//textarea')))
     
-    print('SEGUNDO')
     if (input == None):
         print("Este tipo no era, saliendo")
         raise Exception
+        
     input.clear()
     input.click()
-    entrada = getInput(itemTitle, idEvento, connection)
+    entrada = getInput(itemTitle)
+    print('Respuesta: '+str(entrada))
     input.send_keys(entrada)
     return
 
@@ -66,7 +67,12 @@ def autoCompleteTextArea(driver: WebElement, xpath: str, itemTitle: str, idEvent
 ## TODO: Mejor excepciones
 ## TODO: AÑADIR ARGUMENTOS NECESARIOS AL RESTO DE FUNCIONES
 ## WORK IN PROGRESS
-def autoCompleteField(driver: WebElement, xpath: String, itemTitle: str, idEvento: str, connection):
+def autoCompleteField(driver: WebElement, xpath: String, itemTitle: str, evento: str, conn):
+    global connection
+    connection = conn
+
+    global idEvento
+    idEvento = evento
     """We try different types of input types until we find the right one
 
     Args:
@@ -77,25 +83,20 @@ def autoCompleteField(driver: WebElement, xpath: String, itemTitle: str, idEvent
         connection (_type_): connection to the database
     """
     try:
-        autoCompleteShortAnswer(driver, xpath, itemTitle, idEvento, connection)
+        autoCompleteShortAnswer(driver, xpath, itemTitle)
     except Exception:
         try:
-            print("Probando largo")
-            autoCompleteTextArea(driver, xpath, itemTitle, idEvento, connection)
+            autoCompleteTextArea(driver, xpath, itemTitle)
         except Exception:
-                print('Cagaste x1')
                 try:
-                    autoCompleteCheckBox(driver, xpath, itemTitle, idEvento, connection)
+                    autoCompleteCheckBox(driver, xpath, itemTitle)
                 except Exception:
-                    print('Cagaste x2')
                     try:
-                        autoCompleteRadial(driver, xpath, itemTitle, idEvento, connection)
+                        autoCompleteRadial(driver, xpath, itemTitle)
                     except Exception:
-                        print('Cagaste x3')
                         try:
-                            autoCompleteDropDown(driver, xpath, itemTitle, idEvento, connection);
+                            autoCompleteDropDown(driver, xpath, itemTitle)
                         except Exception as ex:
-                            print('Cagaste x4')
                             print(ex)
 
     return                                                                                                                                                                                                                  
@@ -104,18 +105,18 @@ def autoCompleteField(driver: WebElement, xpath: String, itemTitle: str, idEvent
 
 ## STATUS: WORKING
 ## TODO: Gestionar numero entradas / personas
-def autoCompleteCheckBox(driver: WebElement, xpath: String, itemTitle: str, idEvento: str, connection):
+def autoCompleteCheckBox(driver: WebElement, xpath: String, itemTitle: str):
     div = driver.find_element(By.XPATH, f'{xpath}//*[@role="list"]')
     labels = div.text.split("\n")
     print(f'Labels: {labels}')
 
-    entrada = getInput(itemTitle, idEvento, connection)
+    entrada = getInput(itemTitle)
     print(entrada)
     indexOfRightEntry = labels.index(str(entrada))
 
     checkboxes = driver.find_elements(By.XPATH, f'{xpath}//*[@role="list"]/*[@role="listitem"]//*[@role="checkbox"]')
     
-    entrada = getInput(itemTitle, idEvento, connection)
+    entrada = getInput(itemTitle)
     indexOfRightEntry = labels.index(str(entrada))
 
     if (indexOfRightEntry == ValueError):
@@ -138,11 +139,12 @@ def autoCompleteCheckBox(driver: WebElement, xpath: String, itemTitle: str, idEv
         return
     else:
         checkboxes[indexOfRightEntry].click()  # deberia de valer
+        print('Respuesta: '+str(entrada))
     
     return
 
 ## STATUS: NEEDS UPDATE
-def autoCompleteDropDown(driver: WebElement, xpath: String, itemTitle: str, idEvento: str, connection):
+def autoCompleteDropDown(driver: WebElement, xpath: String, itemTitle: str):
   
     wait = WebDriverWait(driver,1)
 
@@ -155,9 +157,8 @@ def autoCompleteDropDown(driver: WebElement, xpath: String, itemTitle: str, idEv
     
     # we exclude the first one (index 0) because it is repeated
     labels = pagination.text.split("\n")
-    print(labels) #debugging
 
-    entrada = getInput(itemTitle, idEvento, connection)
+    entrada = getInput(itemTitle)
     indexOfRightEntry = labels.index(str(entrada))
     if (indexOfRightEntry == ValueError):
         return
@@ -167,25 +168,27 @@ def autoCompleteDropDown(driver: WebElement, xpath: String, itemTitle: str, idEv
     # HERE WE ARE GETTING THE 2nd OPTION (The index starts at 1, not 0)
     option = driver.find_element(By.XPATH,f'{xpath}//*[@role="listbox"]/*[@role="presentation"][2]/*[@role="option"][{indexOfRightEntry}]')
     option.click()
+    print('Respuesta: '+str(entrada))
     time.sleep(1) ## Necesario para no clickar fuera
+    return
 
 # STATUS: WORKING
 # todo: añadir campo otro
-def autoCompleteRadial(driver: WebElement, xpath: str, itemTitle: str, idEvento: str, connection):
+def autoCompleteRadial(driver: WebElement, xpath: str, itemTitle: str):
     div = driver.find_element(By.XPATH, f'{xpath}//*[@role="radiogroup"]')
     labels = div.text.split("\n")
     print(f'Labels: {labels}')
 
 
     ###
-    entrada = getInput(itemTitle, idEvento, connection)
+    entrada = getInput(itemTitle)
     print(entrada)
     indexOfRightEntry = labels.index(str(entrada))
 
     radios = driver.find_elements(By.XPATH, f'{xpath}//*[@role="radiogroup"]//*[@role="radio"]')
 
     
-    entrada = getInput(itemTitle, idEvento, connection)
+    entrada = getInput(itemTitle)
     indexOfRightEntry = labels.index(str(entrada))
 
     if (indexOfRightEntry == ValueError):
@@ -194,6 +197,7 @@ def autoCompleteRadial(driver: WebElement, xpath: str, itemTitle: str, idEvento:
         ## e usar a función de autocompleteShortAnswer
         ##autocompleteShortAnswer(driver, newXpath, itemTitle, idEvento, connection)
     else:
+        print('Respuesta: '+str(entrada))
         radios[indexOfRightEntry].click()  # deberia de valer
     return
 
@@ -285,7 +289,7 @@ def selectField(label: str) -> int:   #TODO: NUMERO DE ENTRADAS PUEDE SER LIMITA
         return const.ERROR #Error
 
 
-def getInput(itemTitle : str, idEvento : str, connection) -> str:
+def getInput(itemTitle : str) -> str:
     cursor = connection.cursor()
     field = selectField(itemTitle)
     if field == const.NOMBRE:
