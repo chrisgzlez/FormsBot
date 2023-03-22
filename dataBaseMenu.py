@@ -307,7 +307,6 @@ def verInfoGrupo():
             op = input('Pulse \'S\' para salir o cualquier otra tecla para introducir otro ID: ').upper()
             if op == 'S':
                 return
-        else:
             break
             
     cursor = connection.cursor()

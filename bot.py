@@ -80,14 +80,20 @@ def ejecutarBot(conn):
     idEvento = input('ID del evento: ')
     linkInsta = input('Link del paso: ')
 
-    option = webdriver.ChromeOptions() # pa decir que es de chrome
-    # option.add_argument("-incognito")
-    # option.add_argument("--headless") # runs in background, doesn't use GUI, faster
-    # option.add_argument("disable-gpu") # similar to --headless
+    try:
 
-    browser = webdriver.Chrome(executable_path='./chromedriver', options=option)
-    
-    browser.get(linkInsta)
+        option = webdriver.ChromeOptions() # para decir que es de chrome
+        # option.add_argument("-incognito")
+        # option.add_argument("--headless") # runs in background, doesn't use GUI, faster
+        # option.add_argument("disable-gpu") # similar to --headless
+
+        browser = webdriver.Chrome(executable_path='./chromedriver', options=option)
+        
+        browser.get(linkInsta)
+
+    except Exception as ex:
+        print('Error al abrir la pagina: '+str(ex))
+        exit()
 
     #time.sleep(5)
 

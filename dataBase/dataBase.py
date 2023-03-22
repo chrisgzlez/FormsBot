@@ -4,12 +4,15 @@ import os
 
 def connectDataBase():
     contrasena = 123456789
+    password = str(int((contrasena+16493476) // (math.sqrt(2)*math.sqrt(3)*math.sqrt(4)*math.sqrt(5)*math.sqrt(6)*math.sqrt(7)*math.sqrt(8))))
+    #print(password) La contraseña era 696969 
 
     try:
         connection = psycopg2.connect(
             host = 'localhost',
-            user = 'postgres',
-            password = str(int((contrasena+16493476) // (math.sqrt(2)*math.sqrt(3)*math.sqrt(4)*math.sqrt(5)*math.sqrt(6)*math.sqrt(7)*math.sqrt(8)))),
+            user = 'adrian',
+            #password = str(int((contrasena+16493476) // (math.sqrt(2)*math.sqrt(3)*math.sqrt(4)*math.sqrt(5)*math.sqrt(6)*math.sqrt(7)*math.sqrt(8)))),
+            password='2236',
             database = 'forms'
         )
 
@@ -19,7 +22,7 @@ def connectDataBase():
         
         
     except Exception as ex:
-        print('Error al conectar con la base de datos: ' + ex)
+        print('Error al conectar con la base de datos: ' + str(ex))
         return None
 
 def disconnectDataBase(connection):
