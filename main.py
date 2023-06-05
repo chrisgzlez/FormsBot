@@ -2,7 +2,6 @@ import dataBaseMenu
 import bot
 from dataBase import dataBase as db
 
-# !HAY QUE CERRAR EL CONNECTION.CURSOR() CADA VEZ QUE SE CREA UNO
 if __name__ == "__main__":
     global connection
     connection = db.connectDataBase()
@@ -17,7 +16,17 @@ if __name__ == "__main__":
         print('S - Salir')
         op = input('Seleccione una opcion: ').upper()
         if op == 'A':
-            bot.ejecutarBot(connection)
+            while(1):
+                print('\n\nDonde va a estar el link?')
+                print('A - Link en stories')
+                print('B - Link en la bio')
+                link = input('Seleccione una opcion: ').upper()
+                if link=='A' or link=='B':
+                    print('\n\n')
+                    break
+                else:
+                    print('Opcion incorrecta')
+            bot.ejecutarBot(connection, link)
         elif op == 'B':
             dataBaseMenu.menuBaseDatos(connection)
         elif op == 'S':

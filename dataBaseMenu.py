@@ -17,28 +17,20 @@ def transaction(func):
     return wrapper
 
 
-def existePersona(dni: str):
+def existePersona(dni: str) -> int:
     cursor = connection.cursor() 
     cursor.execute("select dni from personas where dni = %s", (dni,))
     rows = cursor.fetchall()
     return len(rows)
 
-def existeGrupo(idGrupo: str):
+def existeGrupo(idGrupo: str) -> int:
     cursor = connection.cursor() 
-    cursor.execute("selecdef _insertarPersonaEnGrupo(dni: str, idGrupo: str):
+    cursor.execute("select * from grupos")
     cursor = connection.cursor()
-    cursor.execute("insert into pertenecer values(%s, %s)", (dni, idGrupo))
-    cursor.execute("select nombre, apellido1, apellido2 from personas where dni = %s", (dni,))
     rows = cursor.fetchall()
-    for row in rows:
-        persona = row
-    cursor.close()
-    print(persona[0] + ' ' + persona[1]+ ' añadid@ correctamente al grupo con ID '+idGrupo)
-    return
-all()
     return len(rows)
 
-def isInGroup(dni: str, idGrupo: str):
+def isInGroup(dni: str, idGrupo: str) -> int:
     cursor = connection.cursor()
     cursor.execute("select * from pertenecer where persona = %s and grupo = %s", (dni, idGrupo))
     rows = cursor.fetchall()
@@ -62,6 +54,8 @@ def crearPersona() -> str:
         dni = input('DNI: ')
         if existePersona(dni):
             print('Ya existe una persona con ese DNI\n')
+        elif dni.upper() == 'NULL' or dni=='':
+            print('La clave primaria DNI no puede ser NULL')
         else:
             break
     nombre = input('Nombre: ')
@@ -73,7 +67,7 @@ def crearPersona() -> str:
     datos = [nombre, apellido1, apellido2, email, instagram, telefono]
 
     for i in range(len(datos)): # para poner un dato a null tiene que ser = None
-        if datos[i].upper() == 'NULL': # si escribimos null lo convierte a None
+        if datos[i].upper() == 'NULL' or datos[i]  == '': # si escribimos null lo convierte a None
             datos[i] = None
 
     while(1):
@@ -108,7 +102,6 @@ def crearGrupo() -> str:
             op = 'N'
             print('Creando nueva persona para ser titular...')
             dni = crearPersona()
-            print(dni)
             idGrupo = input('ID del grupo: ')
             break
 

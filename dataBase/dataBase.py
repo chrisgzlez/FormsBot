@@ -5,14 +5,12 @@ import os
 def connectDataBase():
     contrasena = 123456789
     password = str(int((contrasena+16493476) // (math.sqrt(2)*math.sqrt(3)*math.sqrt(4)*math.sqrt(5)*math.sqrt(6)*math.sqrt(7)*math.sqrt(8))))
-    #print(password) La contraseña era 696969 
 
     try:
         connection = psycopg2.connect(
             host = 'localhost',
             user = 'adrian',
-            #password = str(int((contrasena+16493476) // (math.sqrt(2)*math.sqrt(3)*math.sqrt(4)*math.sqrt(5)*math.sqrt(6)*math.sqrt(7)*math.sqrt(8)))),
-            password='2236',
+            password = password,
             database = 'forms'
         )
 
