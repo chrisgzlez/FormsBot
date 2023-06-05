@@ -25,8 +25,17 @@ def existePersona(dni: str):
 
 def existeGrupo(idGrupo: str):
     cursor = connection.cursor() 
-    cursor.execute("select * from grupos where id = %s", (idGrupo,))
+    cursor.execute("selecdef _insertarPersonaEnGrupo(dni: str, idGrupo: str):
+    cursor = connection.cursor()
+    cursor.execute("insert into pertenecer values(%s, %s)", (dni, idGrupo))
+    cursor.execute("select nombre, apellido1, apellido2 from personas where dni = %s", (dni,))
     rows = cursor.fetchall()
+    for row in rows:
+        persona = row
+    cursor.close()
+    print(persona[0] + ' ' + persona[1]+ ' añadid@ correctamente al grupo con ID '+idGrupo)
+    return
+all()
     return len(rows)
 
 def isInGroup(dni: str, idGrupo: str):
